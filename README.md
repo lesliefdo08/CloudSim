@@ -1,12 +1,12 @@
-# CloudSim Console - Local AWS Simulator
+# CloudSim Console - Local Cloud Simulator
 
-> **Educational cloud platform simulator for learning AWS concepts without costs or complexity**
+> **Educational cloud platform simulator for learning cloud computing concepts without costs or complexity**
 
 ![CloudSim v1.0](CloudSim%20Logo.png)
 
 ## Overview
 
-CloudSim Console is a desktop application that simulates AWS cloud services locally, providing students and professionals with a safe, cost-free environment to learn cloud computing concepts. Built with PySide6, it features an authentic AWS Console-inspired interface with realistic resource management.
+CloudSim Console is a desktop application that simulates cloud services locally, providing students and professionals with a safe, cost-free environment to learn cloud computing concepts. Built with PySide6, it features an authentic cloud console-inspired interface with realistic resource management.
 
 ## Features
 
@@ -31,7 +31,7 @@ CloudSim Console is a desktop application that simulates AWS cloud services loca
 1. **Download** the latest release: [CloudSim-v1.0-Windows.exe](https://github.com/lesliefdo08/CloudSim/releases/tag/v1.0)
 2. **Extract** the ZIP file
 3. **Run** `CloudSim.exe`
-4. **Start Learning** - No installation, AWS account, or cloud costs needed!
+4. **Start Learning** - No installation, cloud account, or costs needed!
 
 ### System Requirements
 - Windows 10/11 (64-bit)
@@ -41,7 +41,7 @@ CloudSim Console is a desktop application that simulates AWS cloud services loca
 
 ## Screenshots
 
-*CloudSim provides an AWS-like experience with familiar interfaces for EC2, S3, RDS, Lambda, and more.*
+*CloudSim provides a cloud console experience with familiar interfaces for EC2, S3, RDS, Lambda, and more.*
 
 ## For Developers
 
@@ -102,17 +102,17 @@ CloudSim/
 
 CloudSim is designed specifically for:
 - Students learning cloud computing concepts
-- Professionals preparing for AWS certifications
+- Professionals preparing for cloud certifications
 - Instructors teaching cloud infrastructure
-- Anyone wanting hands-on AWS experience without costs
+- Anyone wanting hands-on cloud experience without costs
 
 ### What Makes It Different?
-- ✅ No AWS account required
-- ✅ No cloud costs - completely free
+- ✅ No cloud account required
+- ✅ No costs - completely free
 - ✅ Works offline
 - ✅ Instant resource provisioning
 - ✅ Safe experimentation environment
-- ✅ Realistic AWS Console UI
+- ✅ Realistic cloud console UI
 
 ## Version
 
@@ -135,10 +135,10 @@ This is an educational project. For issues, questions, or suggestions, please op
 ## Roadmap
 
 Future enhancements may include:
-- Additional AWS services (SNS, SQS, CloudWatch)
+- Additional cloud services (SNS, SQS, CloudWatch)
 - Docker container support
 - Network simulation (VPC, Security Groups)
-- CloudFormation-style templates
+- Infrastructure-as-Code templates
 - Multi-user collaboration mode
 
 ---
