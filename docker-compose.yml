@@ -1,0 +1,46 @@
+version: '3.8'
+
+# CloudSim - Docker Compose Configuration
+# Defines core services for the local cloud platform
+
+services:
+  # LocalStack - Simulates AWS cloud services locally
+  localstack:
+    image: localstack/localstack:latest
+    container_name: cloudsim-localstack
+    ports:
+      - "4566:4566"      # Main LocalStack endpoint
+      - "4571:4571"      # LocalStack dashboard (optional)
+    environment:
+      # Only enable services needed for basic cloud experiments
+      - SERVICES=s3,sqs,dynamodb,lambda
+      - DEBUG=0
+      - DATA_DIR=/tmp/localstack/data
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "./logs/localstack:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - cloudsim-network
+
+  # MinIO - S3-compatible object storage
+  minio:
+    image: minio/minio:latest
+    container_name: cloudsim-minio
+    ports:
+      - "9000:9000"      # MinIO API endpoint
+      - "9001:9001"      # MinIO web console
+    environment:
+      # Default credentials for local development
+      - MINIO_ROOT_USER=cloudadmin
+      - MINIO_ROOT_PASSWORD=cloudadmin123
+    command: server /data --console-address ":9001"
+    volumes:
+      - "./infrastructure/storage/minio-data:/data"
+    networks:
+      - cloudsim-network
+
+# Define a custom network for service communication
+networks:
+  cloudsim-network:
+    driver: bridge

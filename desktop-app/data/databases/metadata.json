@@ -1,0 +1,110 @@
+[
+  {
+    "name": "test-db",
+    "db_type": "relational",
+    "created_at": "2026-01-23 22:55:22",
+    "table_count": 1,
+    "region": "us-east-1",
+    "owner": "admin",
+    "tags": {}
+  },
+  {
+    "name": "us-db",
+    "db_type": "relational",
+    "created_at": "2026-01-23 22:55:22",
+    "table_count": 0,
+    "region": "us-east-1",
+    "owner": "admin",
+    "tags": {}
+  },
+  {
+    "name": "eu-db",
+    "db_type": "relational",
+    "created_at": "2026-01-23 22:55:22",
+    "table_count": 0,
+    "region": "eu-west-1",
+    "owner": "admin",
+    "tags": {}
+  },
+  {
+    "name": "owned-db",
+    "db_type": "relational",
+    "created_at": "2026-01-23 22:55:22",
+    "table_count": 0,
+    "region": "us-east-1",
+    "owner": "admin",
+    "tags": {}
+  },
+  {
+    "name": "test-db-1769189212",
+    "db_type": "relational",
+    "created_at": "2026-01-23 22:56:52",
+    "table_count": 1,
+    "region": "us-east-1",
+    "owner": "admin",
+    "tags": {}
+  },
+  {
+    "name": "us-db-1769189212",
+    "db_type": "relational",
+    "created_at": "2026-01-23 22:56:52",
+    "table_count": 0,
+    "region": "us-east-1",
+    "owner": "admin",
+    "tags": {}
+  },
+  {
+    "name": "eu-db-1769189212",
+    "db_type": "relational",
+    "created_at": "2026-01-23 22:56:52",
+    "table_count": 0,
+    "region": "eu-west-1",
+    "owner": "admin",
+    "tags": {}
+  },
+  {
+    "name": "owned-db-1769189212",
+    "db_type": "relational",
+    "created_at": "2026-01-23 22:56:52",
+    "table_count": 0,
+    "region": "us-east-1",
+    "owner": "admin",
+    "tags": {}
+  },
+  {
+    "name": "test-db-1769189222",
+    "db_type": "relational",
+    "created_at": "2026-01-23 22:57:02",
+    "table_count": 1,
+    "region": "us-east-1",
+    "owner": "admin",
+    "tags": {}
+  },
+  {
+    "name": "us-db-1769189223",
+    "db_type": "relational",
+    "created_at": "2026-01-23 22:57:03",
+    "table_count": 0,
+    "region": "us-east-1",
+    "owner": "admin",
+    "tags": {}
+  },
+  {
+    "name": "eu-db-1769189223",
+    "db_type": "relational",
+    "created_at": "2026-01-23 22:57:03",
+    "table_count": 0,
+    "region": "eu-west-1",
+    "owner": "admin",
+    "tags": {}
+  },
+  {
+    "name": "owned-db-1769189223",
+    "db_type": "relational",
+    "created_at": "2026-01-23 22:57:03",
+    "table_count": 0,
+    "region": "us-east-1",
+    "owner": "admin",
+    "tags": {}
+  }
+]

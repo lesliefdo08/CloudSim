@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+*.egg
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Config - Keep regions.json but exclude others
+config/*.json
+!config/regions.json
+
+# Build artifacts - MUST EXCLUDE FROM GIT
+desktop-app/dist/
+desktop-app/build/
+dist/
+build/
+*.spec
+*.exe
+*.zip
+
+# Documentation - Exclude all .md except README.md
+*.md
+!README.md
+!CHANGELOG.md
+
+# Temporary files
+*.tmp
+*.bak
+.cache/
+*.pyc
