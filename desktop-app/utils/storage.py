@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 from typing import Any, List
+from utils.data_path import get_data_dir
 
 
 class Storage:
@@ -18,10 +19,8 @@ class Storage:
         Args:
             filename: Name of the JSON file to store data
         """
-        # Create data directory if it doesn't exist
-        self.data_dir = Path("data")
-        self.data_dir.mkdir(exist_ok=True)
-        
+        # Get writable data directory (handles PyInstaller)
+        self.data_dir = get_data_dir()
         self.filepath = self.data_dir / filename
     
     def load(self) -> List[dict]:

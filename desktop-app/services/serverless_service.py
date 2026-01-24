@@ -13,6 +13,7 @@ from core.region import get_current_region
 from core.iam import IAMManager, Action
 from core.events import EventBus, EventType, emit_event
 from core.metering import UsageMeter, MetricType
+from utils.data_path import get_data_dir
 
 
 class ServerlessService:
@@ -25,7 +26,8 @@ class ServerlessService:
     def __init__(self):
         """Initialize serverless service with IAM integration"""
         # Shared storage: data/functions/
-        self.data_root = Path("data/functions")
+        data_dir = get_data_dir()
+        self.data_root = data_dir / "functions"
         self.data_root.mkdir(parents=True, exist_ok=True)
         self.metadata_file = self.data_root / "metadata.json"
         self._functions = {}

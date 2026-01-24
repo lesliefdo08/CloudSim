@@ -11,6 +11,7 @@ from core.region import get_current_region
 from core.iam import IAMManager, Action
 from core.events import EventBus, EventType, emit_event
 from core.metering import UsageMeter, MetricType
+from utils.data_path import get_data_dir
 
 
 class DatabaseService:
@@ -23,7 +24,8 @@ class DatabaseService:
     def __init__(self):
         """Initialize database service with IAM integration"""
         # Shared storage: data/databases/
-        self.data_root = Path("data/databases")
+        data_dir = get_data_dir()
+        self.data_root = data_dir / "databases"
         self.relational_root = self.data_root / "relational"
         self.nosql_root = self.data_root / "nosql"
         self.metadata_file = self.data_root / "metadata.json"

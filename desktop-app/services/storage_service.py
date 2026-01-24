@@ -12,6 +12,7 @@ from core.region import get_current_region
 from core.iam import IAMManager, Action
 from core.events import EventBus, EventType, emit_event
 from core.metering import record_storage_usage
+from utils.data_path import get_data_dir
 
 
 class StorageService:
@@ -24,10 +25,11 @@ class StorageService:
     def __init__(self):
         """Initialize storage service with IAM integration"""
         # Shared storage: data/buckets/
-        self.storage_root = Path("data/buckets")
+        data_dir = get_data_dir()
+        self.storage_root = data_dir / "buckets"
         self.storage_root.mkdir(parents=True, exist_ok=True)
         # Shared metadata: data/bucket_metadata.json
-        self.metadata_file = Path("data/bucket_metadata.json")
+        self.metadata_file = data_dir / "bucket_metadata.json"
         self._buckets = {}
         self._load_buckets()
         

@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from enum import Enum
 import json
 from pathlib import Path
+from utils.data_path import get_data_dir
 
 
 class ResourceType(Enum):
@@ -155,8 +156,7 @@ class BillingService:
     
     def _initialize(self):
         """Initialize billing service"""
-        self.data_dir = Path("data")
-        self.data_dir.mkdir(exist_ok=True)
+        self.data_dir = get_data_dir()
         
         self.activity_log_file = self.data_dir / "activity_logs.json"
         self.cost_tracking_file = self.data_dir / "cost_tracking.json"
