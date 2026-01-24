@@ -1,130 +1,128 @@
 [
   {
-    "name": "test-iam-bucket",
-    "created_at": "2026-01-23 21:54:53",
-    "object_count": 0,
-    "total_size": 0,
-    "region": "us-east-1",
-    "owner": "admin",
-    "tags": {
-      "test": "iam"
-    }
-  },
-  {
-    "name": "test-bucket",
-    "created_at": "2026-01-23 22:53:44",
-    "object_count": 0,
-    "total_size": 0,
-    "region": "us-east-1",
-    "owner": "admin",
-    "tags": {}
-  },
-  {
-    "name": "us-bucket",
-    "created_at": "2026-01-23 22:55:22",
-    "object_count": 0,
-    "total_size": 0,
-    "region": "us-east-1",
-    "owner": "admin",
-    "tags": {}
-  },
-  {
     "name": "eu-bucket",
-    "created_at": "2026-01-23 22:55:22",
-    "object_count": 0,
-    "total_size": 0,
-    "region": "eu-west-1",
-    "owner": "admin",
-    "tags": {}
-  },
-  {
-    "name": "owned-bucket",
-    "created_at": "2026-01-23 22:55:22",
+    "created_at": "2026-01-24 16:12:13",
     "object_count": 0,
     "total_size": 0,
     "region": "us-east-1",
-    "owner": "admin",
-    "tags": {}
-  },
-  {
-    "name": "test-bucket-1769189152",
-    "created_at": "2026-01-23 22:55:52",
-    "object_count": 0,
-    "total_size": 0,
-    "region": "us-east-1",
-    "owner": "admin",
-    "tags": {}
-  },
-  {
-    "name": "test-bucket-1769189212",
-    "created_at": "2026-01-23 22:56:52",
-    "object_count": 0,
-    "total_size": 0,
-    "region": "us-east-1",
-    "owner": "admin",
-    "tags": {}
-  },
-  {
-    "name": "us-bucket-1769189212",
-    "created_at": "2026-01-23 22:56:52",
-    "object_count": 0,
-    "total_size": 0,
-    "region": "us-east-1",
-    "owner": "admin",
+    "owner": null,
     "tags": {}
   },
   {
     "name": "eu-bucket-1769189212",
-    "created_at": "2026-01-23 22:56:52",
-    "object_count": 0,
-    "total_size": 0,
-    "region": "eu-west-1",
-    "owner": "admin",
-    "tags": {}
-  },
-  {
-    "name": "owned-bucket-1769189212",
-    "created_at": "2026-01-23 22:56:52",
+    "created_at": "2026-01-24 16:12:13",
     "object_count": 0,
     "total_size": 0,
     "region": "us-east-1",
-    "owner": "admin",
-    "tags": {}
-  },
-  {
-    "name": "test-bucket-1769189222",
-    "created_at": "2026-01-23 22:57:02",
-    "object_count": 0,
-    "total_size": 0,
-    "region": "us-east-1",
-    "owner": "admin",
-    "tags": {}
-  },
-  {
-    "name": "us-bucket-1769189223",
-    "created_at": "2026-01-23 22:57:03",
-    "object_count": 0,
-    "total_size": 0,
-    "region": "us-east-1",
-    "owner": "admin",
+    "owner": null,
     "tags": {}
   },
   {
     "name": "eu-bucket-1769189223",
-    "created_at": "2026-01-23 22:57:03",
+    "created_at": "2026-01-24 16:12:13",
     "object_count": 0,
     "total_size": 0,
-    "region": "eu-west-1",
-    "owner": "admin",
+    "region": "us-east-1",
+    "owner": null,
+    "tags": {}
+  },
+  {
+    "name": "owned-bucket",
+    "created_at": "2026-01-24 16:12:13",
+    "object_count": 0,
+    "total_size": 0,
+    "region": "us-east-1",
+    "owner": null,
+    "tags": {}
+  },
+  {
+    "name": "owned-bucket-1769189212",
+    "created_at": "2026-01-24 16:12:13",
+    "object_count": 0,
+    "total_size": 0,
+    "region": "us-east-1",
+    "owner": null,
     "tags": {}
   },
   {
     "name": "owned-bucket-1769189223",
-    "created_at": "2026-01-23 22:57:03",
+    "created_at": "2026-01-24 16:12:13",
     "object_count": 0,
     "total_size": 0,
     "region": "us-east-1",
-    "owner": "admin",
+    "owner": null,
+    "tags": {}
+  },
+  {
+    "name": "test-bucket",
+    "created_at": "2026-01-24 16:12:13",
+    "object_count": 0,
+    "total_size": 0,
+    "region": "us-east-1",
+    "owner": null,
+    "tags": {}
+  },
+  {
+    "name": "test-bucket-1769189152",
+    "created_at": "2026-01-24 16:12:13",
+    "object_count": 0,
+    "total_size": 0,
+    "region": "us-east-1",
+    "owner": null,
+    "tags": {}
+  },
+  {
+    "name": "test-bucket-1769189212",
+    "created_at": "2026-01-24 16:12:13",
+    "object_count": 0,
+    "total_size": 0,
+    "region": "us-east-1",
+    "owner": null,
+    "tags": {}
+  },
+  {
+    "name": "test-bucket-1769189222",
+    "created_at": "2026-01-24 16:12:13",
+    "object_count": 0,
+    "total_size": 0,
+    "region": "us-east-1",
+    "owner": null,
+    "tags": {}
+  },
+  {
+    "name": "test-iam-bucket",
+    "created_at": "2026-01-24 16:12:13",
+    "object_count": 0,
+    "total_size": 0,
+    "region": "us-east-1",
+    "owner": null,
+    "tags": {}
+  },
+  {
+    "name": "us-bucket",
+    "created_at": "2026-01-24 16:12:13",
+    "object_count": 0,
+    "total_size": 0,
+    "region": "us-east-1",
+    "owner": null,
+    "tags": {}
+  },
+  {
+    "name": "us-bucket-1769189212",
+    "created_at": "2026-01-24 16:12:13",
+    "object_count": 0,
+    "total_size": 0,
+    "region": "us-east-1",
+    "owner": null,
+    "tags": {}
+  },
+  {
+    "name": "us-bucket-1769189223",
+    "created_at": "2026-01-24 16:12:13",
+    "object_count": 0,
+    "total_size": 0,
+    "region": "us-east-1",
+    "owner": null,
     "tags": {}
   }
 ]

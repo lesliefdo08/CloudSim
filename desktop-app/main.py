@@ -6,10 +6,32 @@ A student-focused local cloud computing lab platform
 """
 
 import sys
+import os
 from pathlib import Path
 from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QIcon
 from ui.main_window import MainWindow
+
+# Windows-specific: Set AppUserModelID for taskbar icon
+if sys.platform == 'win32':
+    try:
+        from ctypes import windll
+        # Set AppUserModelID so Windows shows our icon in taskbar
+        windll.shell32.SetCurrentProcessExplicitAppUserModelID('CloudSim.Desktop.v1.0')
+    except:
+        pass
+
+
+def get_resource_path(relative_path):
+    """Get absolute path to resource, works for dev and PyInstaller"""
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except AttributeError:
+        # Running in normal Python environment
+        base_path = os.path.dirname(os.path.abspath(__file__))
+    
+    return os.path.join(base_path, relative_path)
 
 
 class CloudSimApp(MainWindow):
@@ -20,10 +42,10 @@ class CloudSimApp(MainWindow):
         self.setWindowTitle("CloudSim Console")
         self.setMinimumSize(1400, 900)
         
-        # Set window icon (taskbar icon)
-        icon_path = Path("icon.ico")
-        if icon_path.exists():
-            self.setWindowIcon(QIcon(str(icon_path)))
+        # Set window icon (taskbar icon) - works with PyInstaller
+        icon_path = get_resource_path("icon.ico")
+        if os.path.exists(icon_path):
+            self.setWindowIcon(QIcon(icon_path))
 
 
 def main():
@@ -35,10 +57,10 @@ def main():
     app.setApplicationName("CloudSim Console")
     app.setOrganizationName("CloudSim")
     
-    # Set application icon (for taskbar grouping)
-    icon_path = Path("icon.ico")
-    if icon_path.exists():
-        app.setWindowIcon(QIcon(str(icon_path)))
+    # Set application icon (for taskbar grouping) - works with PyInstaller
+    icon_path = get_resource_path("icon.ico")
+    if os.path.exists(icon_path):
+        app.setWindowIcon(QIcon(icon_path))
     
     # Create and show the app controller
     window = CloudSimApp()
