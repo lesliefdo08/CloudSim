@@ -43,7 +43,6 @@ desktop-app/dist/
 desktop-app/build/
 dist/
 build/
-*.spec
 *.exe
 *.zip
 
