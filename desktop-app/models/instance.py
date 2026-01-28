@@ -65,7 +65,7 @@ class Instance:
     memory: int  # Memory in MB
     created_at: str
     region: str = "us-east-1"  # AWS-style region
-    image: str = "ubuntu:latest"
+    image: str = "ubuntu:latest"  # Docker image (ubuntu:22.04, amazonlinux:2, debian:latest)
     owner: Optional[str] = None  # IAM user who created the instance
     tags: Dict[str, str] = field(default_factory=dict)  # AWS-style tags
     state: str = "stopped"  # More detailed state (for backward compatibility with status)
@@ -74,6 +74,7 @@ class Instance:
     billing_hours: float = 0.0  # Simulated hourly billing counter
     last_start_time: Optional[str] = None  # When instance was last started
     instance_type: str = "t3.micro"  # AWS instance type simulation
+    container_id: Optional[str] = None  # Docker container ID for real container backing
     
     @staticmethod
     def create_new(name: str, cpu: int = 1, memory: int = 512, image: str = "ubuntu:latest",
@@ -148,6 +149,8 @@ class Instance:
                 data['instance_type'] = 't3.medium'
             else:
                 data['instance_type'] = 't3.micro'
+        if 'container_id' not in data:
+            data['container_id'] = None  # Backward compatibility for Docker integration
         return Instance(**data)
     
     def arn(self) -> str:

@@ -3,7 +3,9 @@
 # GUI Framework
 PySide6>=6.6.0
 
-# Future dependencies will be added as features are implemented
-# docker>=7.0.0
+# Docker SDK for real container backing
+docker>=7.0.0
+
+# Future dependencies
 # boto3>=1.34.0
 # minio>=7.2.0

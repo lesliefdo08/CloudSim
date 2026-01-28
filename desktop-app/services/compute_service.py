@@ -1,5 +1,5 @@
 """
-Compute Service - Manages compute instances (EC2-like) with AWS-style region and IAM support
+Compute Service - Manages compute instances (EC2-like) with Docker container backing
 """
 
 from typing import List, Optional
@@ -10,6 +10,7 @@ from core.iam import IAMManager, Action
 from core.events import EventBus, EventType, emit_event
 from core.metering import UsageMeter, record_compute_usage
 from services.billing_service import billing_service
+from services.docker_compute_service import docker_service
 
 
 class ComputeService:
@@ -31,6 +32,12 @@ class ComputeService:
         self.iam_manager = IAMManager()
         self.event_bus = EventBus()
         self.usage_meter = UsageMeter()
+        
+        # Docker service for container backing
+        self.docker_service = docker_service
+        
+        # Reconnect to existing containers after app restart
+        self._reconnect_containers()
     
     def _load_instances(self):
         """Load instances from storage"""
@@ -38,6 +45,33 @@ class ComputeService:
         for instance_data in data:
             instance = Instance.from_dict(instance_data)
             self._instances[instance.id] = instance
+    
+    def _reconnect_containers(self):
+        """Reconnect to existing Docker containers after app restart"""
+        if not self.docker_service.is_available():
+            return
+        
+        for instance in self._instances.values():
+            if instance.container_id:
+                # Verify container still exists
+                if self.docker_service.reconnect_to_container(instance.container_id):
+                    # Update instance status based on container status
+                    container_status = self.docker_service.get_container_status(instance.container_id)
+                    if container_status == "running" and instance.status != "running":
+                        instance.status = "running"
+                        instance.state = "running"
+                    elif container_status == "exited" and instance.status == "running":
+                        instance.status = "stopped"
+                        instance.state = "stopped"
+                else:
+                    # Container no longer exists, clear container_id
+                    instance.container_id = None
+                    if instance.status == "running":
+                        instance.status = "stopped"
+                        instance.state = "stopped"
+        
+        # Save any status changes
+        self._save_instances()
     
     def _save_instances(self):
         """Save instances to storage"""
@@ -56,16 +90,16 @@ class ComputeService:
             raise PermissionError(f"User does not have permission for action: {action}")
     
     def create_instance(self, name: str, cpu: int = 1, memory: int = 512, 
-                       image: str = "ubuntu:latest", region: Optional[str] = None,
+                       image: str = "ubuntu:22.04", region: Optional[str] = None,
                        tags: Optional[dict] = None) -> Instance:
         """
-        Create a new compute instance in specified region
+        Create a new compute instance with Docker container backing
         
         Args:
             name: Instance name
             cpu: Number of virtual CPUs
             memory: Memory in MB
-            image: Container image (simulated)
+            image: Docker image (ubuntu:22.04, amazonlinux:2, debian:latest)
             region: AWS region (defaults to current region)
             tags: AWS-style tags
             
@@ -102,6 +136,13 @@ class ComputeService:
         
         # Create instance with region and owner
         instance = Instance.create_new(name, cpu, memory, image, region, owner, tags)
+        
+        # Create Docker container if Docker is available
+        if self.docker_service.is_available():
+            container_id = self.docker_service.create_container(instance.id, name, image)
+            if container_id:
+                instance.container_id = container_id
+        
         self._instances[instance.id] = instance
         self._save_instances()
         
@@ -179,7 +220,7 @@ class ComputeService:
     
     def start_instance(self, instance_id: str) -> bool:
         """
-        Start an instance
+        Start an instance and its Docker container
         
         Args:
             instance_id: Instance ID
@@ -198,6 +239,11 @@ class ComputeService:
         instance = self.get_instance(instance_id)
         if instance:
             username = "local-user"
+            
+            # Start Docker container if available
+            if instance.container_id and self.docker_service.is_available():
+                if not self.docker_service.start_container(instance.container_id):
+                    return False
             
             if instance.start(username):
                 self._save_instances()
@@ -237,7 +283,7 @@ class ComputeService:
     
     def stop_instance(self, instance_id: str) -> bool:
         """
-        Stop an instance
+        Stop an instance and its Docker container
         
         Args:
             instance_id: Instance ID
@@ -256,6 +302,10 @@ class ComputeService:
         instance = self.get_instance(instance_id)
         if instance:
             username = "local-user"
+            
+            # Stop Docker container if available
+            if instance.container_id and self.docker_service.is_available():
+                self.docker_service.stop_container(instance.container_id)
             
             if instance.stop(username):
                 # Record usage and update billing
@@ -309,8 +359,16 @@ class ComputeService:
                 return True
         return False
     
-    def reboot_instance(self, instance_id: str) -> bool:
-        """Reboot an instance"""
+    def terminate_instance(self, instance_id: str) -> bool:
+        """
+        Terminate an instance and remove its Docker container
+        
+        Args:
+            instance_id: Instance ID
+            
+        Returns:
+            True if terminated successfully
+        """
         # Check IAM permission
         self._check_permission(Action.COMPUTE_START.value, instance_id)
         
@@ -318,14 +376,16 @@ class ComputeService:
         if instance:
             username = "local-user"
             
-            if instance.reboot(username):
-                
-                # Track resource stop for billing
-                billing_service.track_resource_stop(instance_id)
+            # Remove Docker container if available
+            if instance.container_id and self.docker_service.is_available():
+                self.docker_service.remove_container(instance.container_id)
+            
+            # Track resource stop for billing
+            billing_service.track_resource_stop(instance_id)
             
             # Calculate final cost
             instance_type = self._estimate_instance_type(instance.cpu, instance.memory)
-            hours = hours if instance.status == "running" else 0.0
+            hours = self.usage_meter.get_tracked_hours(instance_id) or 0.0
             cost, explanation = billing_service.calculate_resource_cost(
                 "ec2_instance",
                 instance_type=instance_type,

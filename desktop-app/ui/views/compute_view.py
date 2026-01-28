@@ -28,6 +28,7 @@ from ui.components.action_buttons import (
 from ui.components.tooltips import add_tooltip_to_widget, show_cloud_tooltip
 from ui.components.notifications import NotificationManager
 from ui.components.slide_in_drawer import SlideInDrawer
+from ui.components.instance_terminal import InstanceTerminal
 from ui.design_system import Colors, Fonts, Spacing, Animations
 from datetime import datetime
 
@@ -128,12 +129,18 @@ class CreateInstanceDialog(QDialog):
         # AMI / Image
         self.image_input = QComboBox()
         self.image_input.addItems([
-            "Amazon Linux 2023",
             "Ubuntu 22.04 LTS",
-            "Windows Server 2022",
-            "Red Hat Enterprise Linux 9",
-            "Debian 11",
+            "Ubuntu 20.04 LTS",
+            "Amazon Linux 2",
+            "Debian Latest",
         ])
+        # Map UI selections to Docker images
+        self.image_map = {
+            "Ubuntu 22.04 LTS": "ubuntu:22.04",
+            "Ubuntu 20.04 LTS": "ubuntu:20.04",
+            "Amazon Linux 2": "amazonlinux:2",
+            "Debian Latest": "debian:latest",
+        }
         add_tooltip_to_widget(self.image_input, 'ami')
         ami_label = QLabel("AMI (Image):")
         ami_label.setStyleSheet(f"color: {Colors.TEXT_PRIMARY}; font-weight: {Fonts.MEDIUM};")
@@ -213,11 +220,12 @@ class CreateInstanceDialog(QDialog):
     
     def get_values(self):
         """Get input values"""
+        selected_image = self.image_input.currentText()
         return {
             "name": self.name_input.text().strip() or f"instance-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
             "cpu": self.cpu_input.value(),
             "memory": self.memory_input.value(),
-            "image": self.image_input.currentText()
+            "image": self.image_map.get(selected_image, "ubuntu:22.04")  # Map to Docker image
         }
 
 
@@ -893,7 +901,7 @@ class ModernComputeView(QWidget):
         
         # State-based action visibility
         if status == 'running':
-            return ['stop', 'restart', 'terminate']
+            return ['terminal', 'stop', 'restart', 'terminate']
         elif status == 'stopped':
             return ['start', 'terminate']
         elif status == 'pending':
@@ -909,6 +917,10 @@ class ModernComputeView(QWidget):
     
     def handle_card_action(self, action: str, instance_id: str):
         """Handle action triggered from card"""
+        if action == 'terminal':
+            self.open_terminal(instance_id)
+            return
+        
         action_map = {
             'start': self.start_instance,
             'stop': self.stop_instance,
@@ -919,6 +931,46 @@ class ModernComputeView(QWidget):
         handler = action_map.get(action)
         if handler:
             handler(instance_id)
+    
+    def open_terminal(self, instance_id: str):
+        """Open terminal dialog for instance"""
+        instance = self.compute_service.get_instance(instance_id)
+        if not instance:
+            NotificationManager.show_error("Instance not found")
+            return
+        
+        if instance.status != 'running':
+            NotificationManager.show_error("Instance must be running to open terminal")
+            return
+        
+        if not instance.container_id:
+            NotificationManager.show_error("Instance has no container backing")
+            return
+        
+        # Create terminal dialog
+        dialog = QDialog(self)
+        dialog.setWindowTitle(f"Terminal - {instance.name}")
+        dialog.setMinimumSize(800, 600)
+        dialog.setStyleSheet(f"""
+            QDialog {{
+                background-color: {Colors.BACKGROUND};
+            }}
+        """)
+        
+        layout = QVBoxLayout(dialog)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+        
+        # Create terminal widget
+        terminal = InstanceTerminal(
+            instance_id=instance.id,
+            instance_name=instance.name,
+            docker_service=self.compute_service.docker_service
+        )
+        terminal.set_container_id(instance.container_id)
+        layout.addWidget(terminal)
+        
+        dialog.exec()
     
     def create_instance(self):
         """Show create instance dialog"""

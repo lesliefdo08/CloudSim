@@ -11,12 +11,31 @@ CloudSim Console is a desktop application that simulates cloud services locally,
 ## Features
 
 ### Core Services
-- **EC2 Instances** - Launch and manage virtual servers with realistic state management
+- **EC2 Instances** - Launch and manage virtual servers with **real Docker containers** 🐳
 - **S3 Storage** - Create buckets, upload/download files with versioning support
 - **EBS Volumes** - Block storage volumes with attach/detach capabilities
 - **RDS Databases** - Provision MySQL/PostgreSQL databases with connection management
 - **Lambda Functions** - Deploy and test serverless functions with runtime support
 - **IAM Simulation** - Role-based access control and permissions (educational mode)
+
+### Docker-Powered Compute (NEW) 🚀
+
+CloudSim v1.0 now features **container-backed EC2 instances** for realistic cloud computing simulation:
+
+- **Real Linux Environments** - Each instance runs as an actual Docker container
+- **Supported OS Images**:
+  - Ubuntu 22.04 LTS (`ubuntu:22.04`)
+  - Ubuntu 20.04 LTS (`ubuntu:20.04`)
+  - Amazon Linux 2 (`amazonlinux:2`)
+  - Debian Latest (`debian:latest`)
+- **Interactive Terminal** - Execute real shell commands inside instances (ls, whoami, apt, yum, etc.)
+- **Container Lifecycle** - Start/stop/terminate instances controls actual Docker containers
+- **Persistent State** - Containers reconnect automatically after app restart
+- **Educational Realism** - Experience authentic Linux command-line operations
+
+**Requirements:**
+- Docker Desktop (Windows/Mac) or Docker Engine (Linux) must be running
+- No special configuration needed - CloudSim auto-detects Docker
 
 ### Monitoring & Management
 - **Activity Log** - CloudTrail-style event tracking for all resource operations
@@ -37,7 +56,8 @@ CloudSim Console is a desktop application that simulates cloud services locally,
 - Windows 10/11 (64-bit)
 - 4 GB RAM minimum
 - 500 MB disk space
-- No internet connection required
+- **Docker Desktop** (for container-backed compute instances)
+- No internet connection required (except for Docker image downloads)
 
 ## Screenshots
 
