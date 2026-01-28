@@ -237,11 +237,11 @@ class ModernComputeView(QWidget):
         self.compute_service = ComputeService()
         self.volume_service = volume_service
         self.current_instance_id = None
-        self.view_mode = 'auto'  # 'card', 'table', or 'auto'
+        self.table_instance_map = {}  # Row to instance ID mapping
         self.selected_items = []  # Track multi-selection
         self._init_ui()
         
-        # Initial load with skeleton
+        # Initial load
         QTimer.singleShot(100, self._load_instances)
     
     def resizeEvent(self, event):
@@ -319,64 +319,8 @@ class ModernComputeView(QWidget):
         self.action_bar.refresh_clicked.connect(self._load_instances)
         action_row.addWidget(self.action_bar)
         
-        # View mode toggle
-        view_toggle_container = QWidget()
-        view_toggle_layout = QHBoxLayout(view_toggle_container)
-        view_toggle_layout.setContentsMargins(0, 0, 0, 0)
-        view_toggle_layout.setSpacing(4)
-        
-        toggle_label = QLabel("View:")
-        toggle_label.setStyleSheet(f"""
-            color: {Colors.TEXT_SECONDARY};
-            font-size: {Fonts.SMALL};
-            padding-right: 8px;
-        """)
-        view_toggle_layout.addWidget(toggle_label)
-        
-        self.card_view_btn = QPushButton("🎴 Cards")
-        self.table_view_btn = QPushButton("📊 Table")
-        
-        for btn in [self.card_view_btn, self.table_view_btn]:
-            btn.setCheckable(True)
-            btn.setFixedHeight(36)
-            btn.setCursor(Qt.PointingHandCursor)
-            btn.setStyleSheet(f"""
-                QPushButton {{
-                    background: {Colors.SURFACE};
-                    border: 1px solid {Colors.BORDER};
-                    color: {Colors.TEXT_SECONDARY};
-                    padding: 6px 16px;
-                    font-size: {Fonts.SMALL};
-                    border-radius: 6px;
-                }}
-                QPushButton:checked {{
-                    background: {Colors.COMPUTE};
-                    border-color: {Colors.COMPUTE};
-                    color: white;
-                    font-weight: {Fonts.SEMIBOLD};
-                }}
-                QPushButton:hover {{
-                    border-color: {Colors.COMPUTE};
-                }}
-            """)
-        
-        self.card_view_btn.clicked.connect(lambda: self._switch_view('card'))
-        self.table_view_btn.clicked.connect(lambda: self._switch_view('table'))
-        
-        view_toggle_layout.addWidget(self.card_view_btn)
-        view_toggle_layout.addWidget(self.table_view_btn)
-        
-        # Bulk selection hint
-        self.bulk_hint = QLabel("💡 Switch to Table view for multi-select")
-        self.bulk_hint.setStyleSheet(f"""
-            QLabel {{
-                color: {Colors.TEXT_MUTED};
-                font-size: {Fonts.SMALL};
-                font-style: italic;
-                padding-left: 16px;
-            }}
-        """)
-        view_toggle_layout.addWidget(self.bulk_hint)
+        # Table-only interface - no view switching
+        action_row.addStretch()
         
         view_toggle_layout.addStretch()
         
@@ -386,18 +330,9 @@ class ModernComputeView(QWidget):
         # Spacing before resource list
         layout.addSpacing(int(Spacing.MD.replace('px', '')))
         
-        # SECTION 3: Stacked container for card/table views
-        self.view_stack = QStackedWidget()
-        
-        # Card view
-        self.card_container = CardContainer(self)
-        self.view_stack.addWidget(self.card_container)
-        
-        # Table view
+        # TABLE-ONLY VIEW (no cards)
         self.table_view = self._create_table_view()
-        self.view_stack.addWidget(self.table_view)
-        
-        layout.addWidget(self.view_stack)
+        layout.addWidget(self.table_view)
     
     def _create_header(self) -> QWidget:
         """Create modern header with title and stats"""
@@ -512,11 +447,11 @@ class ModernComputeView(QWidget):
         return shadow
     
     def _create_table_view(self) -> QTableWidget:
-        """Create AWS-style table with name-first priority and hover actions"""
+        """Create AWS-style table with name-first priority and visible actions"""
         table = QTableWidget()
-        table.setColumnCount(7)
+        table.setColumnCount(8)  # Added Actions column
         table.setHorizontalHeaderLabels([
-            "", "Name", "Instance ID", "State", "Type", "Region", "Created"
+            "", "Name", "Instance ID", "State", "Image", "Type", "Created", "Actions"
         ])
         
         # AWS-style table styling with elevated rows and zebra striping
@@ -602,19 +537,6 @@ class ModernComputeView(QWidget):
         if instance_id:
             self.show_instance_details(instance_id)
     
-    def _switch_view(self, mode: str):
-        """Switch between card and table view"""
-        self.view_mode = mode
-        
-        if mode == 'card':
-            self.view_stack.setCurrentIndex(0)
-            self.card_view_btn.setChecked(True)
-            self.table_view_btn.setChecked(False)
-        else:  # table
-            self.view_stack.setCurrentIndex(1)
-            self.card_view_btn.setChecked(False)
-            self.table_view_btn.setChecked(True)
-    
     def _on_table_row_double_clicked(self, index):
         """Handle double-click on table row"""
         row = index.row()
@@ -631,65 +553,38 @@ class ModernComputeView(QWidget):
         self.stopped_stat.findChild(QLabel, "stat_value").setText(str(stats['stopped']))
     
     def _load_instances(self):
-        """Load instances with skeleton loading"""
+        """Load instances with loading indicator"""
         self.action_bar.set_loading(True)
-        self.card_container.show_loading(5)
         
-        # Simulate loading delay for smooth UX
-        QTimer.singleShot(800, self._render_instances)
+        # Render after short delay
+        QTimer.singleShot(200, self._render_instances)
     
     def _render_instances(self):
-        """Render instance cards and table"""
+        """Render instances in table view only"""
         self.action_bar.set_loading(False)
         instances = self.compute_service.list_instances()
         self._update_stats()
         
         if not instances:
-            # AWS-grade empty state
-            self.card_container.clear_cards()
-            empty = self.card_container.show_empty(
-                "No EC2 instances",
-                "Virtual servers for hosting applications, running workloads, and deploying services.",
-                "🖥️",
-                "Launch Instance"
-            )
-            empty.create_clicked.connect(self.create_instance)
-            self.view_stack.setCurrentIndex(0)  # Show card view for empty state
-            self.card_view_btn.setChecked(True)
-            self.table_view_btn.setChecked(False)
+            # Show empty state in table
+            self.table_view.setRowCount(1)
+            empty_widget = QWidget()
+            empty_layout = QVBoxLayout(empty_widget)
+            empty_layout.setAlignment(Qt.AlignCenter)
+            
+            empty_label = QLabel("No EC2 Instances")
+            empty_label.setStyleSheet(f"color: {Colors.TEXT_PRIMARY}; font-size: 18px; font-weight: bold;")
+            empty_layout.addWidget(empty_label, alignment=Qt.AlignCenter)
+            
+            empty_desc = QLabel("Launch an instance to get started")
+            empty_desc.setStyleSheet(f"color: {Colors.TEXT_SECONDARY}; font-size: 14px;")
+            empty_layout.addWidget(empty_desc, alignment=Qt.AlignCenter)
+            
+            self.table_view.setCellWidget(0, 0, empty_widget)
+            self.table_view.setSpan(0, 0, 1, 8)  # Span all 8 columns
             return
         
-        # Decide default view: table if > 3 instances, otherwise cards
-        if self.view_mode == 'auto':
-            if len(instances) > 3:
-                self._switch_view('table')
-            else:
-                self._switch_view('card')
-        
-        # Populate card view
-        self.card_container.clear_cards()
-        for instance in instances:
-            card_data = {
-                'icon': '🖥️',
-                'name': instance.name,
-                'id': instance.id,
-                'status': instance.status,
-                'details': {
-                    'Image': instance.image,
-                    'CPU': f"{instance.cpu} vCPU",
-                    'Memory': f"{instance.memory} MB",
-                    'Created': instance.created_at if hasattr(instance, 'created_at') else 'N/A',
-                },
-                'actions': self._get_instance_actions(instance.status)
-            }
-            
-            card = ResourceCard(instance.id, card_data, self)
-            card.clicked.connect(self.show_instance_details)
-            card.action_triggered.connect(self.handle_card_action)
-            
-            self.card_container.add_card(card)
-        
-        # Populate table view
+        # Populate table
         self._populate_table(instances)
     
     def _populate_table(self, instances):
@@ -813,7 +708,21 @@ class ModernComputeView(QWidget):
             
             self.table_view.setCellWidget(row, 3, state_widget)
             
-            # COLUMN 4: Instance Type
+            # COLUMN 4: Image (OS/AMI)
+            image_widget = QWidget()
+            image_widget.setStyleSheet(f"background: {row_bg};")
+            image_layout = QHBoxLayout(image_widget)
+            image_layout.setContentsMargins(12, 0, 8, 0)
+            
+            image_text = instance.image if instance.image else "ubuntu:22.04"
+            image_label = QLabel(image_text)
+            image_label.setStyleSheet(f"color: {Colors.TEXT_PRIMARY}; font-size: 13px; font-family: {Fonts.MONOSPACE};")
+            image_layout.addWidget(image_label)
+            image_layout.addStretch()
+            
+            self.table_view.setCellWidget(row, 4, image_widget)
+            
+            # COLUMN 5: Instance Type
             type_widget = QWidget()
             type_widget.setStyleSheet(f"background: {row_bg};")
             type_layout = QHBoxLayout(type_widget)
@@ -825,22 +734,9 @@ class ModernComputeView(QWidget):
             type_layout.addWidget(type_label)
             type_layout.addStretch()
             
-            self.table_view.setCellWidget(row, 4, type_widget)
+            self.table_view.setCellWidget(row, 5, type_widget)
             
-            # COLUMN 5: Region (60% opacity)
-            region_widget = QWidget()
-            region_widget.setStyleSheet(f"background: {row_bg};")
-            region_layout = QHBoxLayout(region_widget)
-            region_layout.setContentsMargins(12, 0, 8, 0)
-            
-            region_label = QLabel(instance.region or "us-east-1")
-            region_label.setStyleSheet(f"color: {Colors.TEXT_SECONDARY}; font-size: 13px; opacity: 0.6;")
-            region_layout.addWidget(region_label)
-            region_layout.addStretch()
-            
-            self.table_view.setCellWidget(row, 5, region_widget)
-            
-            # COLUMN 6: Created timestamp (60% opacity, relative time)
+            # COLUMN 6: Created timestamp
             created_widget = QWidget()
             created_widget.setStyleSheet(f"background: {row_bg};")
             created_layout = QHBoxLayout(created_widget)
@@ -853,6 +749,95 @@ class ModernComputeView(QWidget):
             created_layout.addStretch()
             
             self.table_view.setCellWidget(row, 6, created_widget)
+            
+            # COLUMN 7: Actions (ALWAYS VISIBLE)
+            actions_widget = QWidget()
+            actions_widget.setStyleSheet(f"background: {row_bg};")
+            actions_layout = QHBoxLayout(actions_widget)
+            actions_layout.setContentsMargins(8, 6, 8, 6)
+            actions_layout.setSpacing(4)
+            
+            # Add action buttons based on state
+            if instance.status == 'running':
+                # Terminal button
+                terminal_btn = QPushButton("Terminal")
+                terminal_btn.setStyleSheet(f"""
+                    QPushButton {{
+                        background: {Colors.COMPUTE};
+                        color: white;
+                        border: none;
+                        padding: 4px 12px;
+                        border-radius: 4px;
+                        font-size: 12px;
+                    }}
+                    QPushButton:hover {{
+                        background: #1177bb;
+                    }}
+                """)
+                terminal_btn.setCursor(Qt.PointingHandCursor)
+                terminal_btn.clicked.connect(lambda checked, id=instance.id: self.open_terminal(id))
+                actions_layout.addWidget(terminal_btn)
+                
+                # Stop button
+                stop_btn = QPushButton("Stop")
+                stop_btn.setStyleSheet(f"""
+                    QPushButton {{
+                        background: transparent;
+                        color: {Colors.TEXT_PRIMARY};
+                        border: 1px solid {Colors.BORDER};
+                        padding: 4px 12px;
+                        border-radius: 4px;
+                        font-size: 12px;
+                    }}
+                    QPushButton:hover {{
+                        border-color: {Colors.COMPUTE};
+                    }}
+                """)
+                stop_btn.setCursor(Qt.PointingHandCursor)
+                stop_btn.clicked.connect(lambda checked, id=instance.id: self.stop_instance(id))
+                actions_layout.addWidget(stop_btn)
+                
+            elif instance.status == 'stopped':
+                # Start button
+                start_btn = QPushButton("Start")
+                start_btn.setStyleSheet(f"""
+                    QPushButton {{
+                        background: #10b981;
+                        color: white;
+                        border: none;
+                        padding: 4px 12px;
+                        border-radius: 4px;
+                        font-size: 12px;
+                    }}
+                    QPushButton:hover {{
+                        background: #059669;
+                    }}
+                """)
+                start_btn.setCursor(Qt.PointingHandCursor)
+                start_btn.clicked.connect(lambda checked, id=instance.id: self.start_instance(id))
+                actions_layout.addWidget(start_btn)
+                
+                # Terminate button
+                terminate_btn = QPushButton("Terminate")
+                terminate_btn.setStyleSheet(f"""
+                    QPushButton {{
+                        background: transparent;
+                        color: #ef4444;
+                        border: 1px solid #ef4444;
+                        padding: 4px 12px;
+                        border-radius: 4px;
+                        font-size: 12px;
+                    }}
+                    QPushButton:hover {{
+                        background: rgba(239, 68, 68, 0.1);
+                    }}
+                """)
+                terminate_btn.setCursor(Qt.PointingHandCursor)
+                terminate_btn.clicked.connect(lambda checked, id=instance.id: self.terminate_instance(id))
+                actions_layout.addWidget(terminate_btn)
+            
+            actions_layout.addStretch()
+            self.table_view.setCellWidget(row, 7, actions_widget)
         
         self.table_view.setSortingEnabled(True)
     
@@ -939,12 +924,23 @@ class ModernComputeView(QWidget):
             NotificationManager.show_error("Instance not found")
             return
         
+        # Docker availability check
+        if not self.compute_service.docker_service.is_available():
+            NotificationManager.show_error("Docker is not running. Please start Docker Desktop.")
+            return
+        
         if instance.status != 'running':
             NotificationManager.show_error("Instance must be running to open terminal")
             return
         
         if not instance.container_id:
-            NotificationManager.show_error("Instance has no container backing")
+            NotificationManager.show_error("Container not created. Try stopping and starting the instance.")
+            return
+        
+        # Verify container is actually running
+        container_status = self.compute_service.docker_service.get_container_status(instance.container_id)
+        if container_status != 'running':
+            NotificationManager.show_error(f"Container is {container_status}. Cannot open terminal.")
             return
         
         # Create terminal dialog

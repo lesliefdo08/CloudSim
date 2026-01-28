@@ -134,15 +134,10 @@ class ComputeService:
         import random
         time.sleep(random.uniform(1.5, 2.0))
         
-        # Create instance with region and owner
+        # Create instance with region and owner (STOPPED state, no container yet)
         instance = Instance.create_new(name, cpu, memory, image, region, owner, tags)
         
-        # Create Docker container if Docker is available
-        if self.docker_service.is_available():
-            container_id = self.docker_service.create_container(instance.id, name, image)
-            if container_id:
-                instance.container_id = container_id
-        
+        # Container will be created on first start (AWS-like behavior)
         self._instances[instance.id] = instance
         self._save_instances()
         
@@ -240,10 +235,21 @@ class ComputeService:
         if instance:
             username = "local-user"
             
-            # Start Docker container if available
+            # Create container if doesn't exist yet (first start)
+            if not instance.container_id and self.docker_service.is_available():
+                container_id = self.docker_service.create_container(
+                    instance.id, 
+                    instance.name, 
+                    instance.image
+                )
+                if container_id:
+                    instance.container_id = container_id
+                    self._save_instances()  # Persist container_id immediately
+            
+            # Start the container
             if instance.container_id and self.docker_service.is_available():
                 if not self.docker_service.start_container(instance.container_id):
-                    return False
+                    raise RuntimeError(f"Failed to start container {instance.container_id}")
             
             if instance.start(username):
                 self._save_instances()
