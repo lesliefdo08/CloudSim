@@ -1,0 +1,21 @@
+[
+  {
+    "id": "i-019daa",
+    "name": "leslie",
+    "state": "STOPPED",
+    "image": "ubuntu:22.04",
+    "cpu": 1,
+    "memory": 1024,
+    "created_at": "2026-01-28T19:08:14.381693"
+  },
+  {
+    "id": "i-0f1ac1",
+    "name": "abeyyy",
+    "state": "STOPPED",
+    "image": "ubuntu:22.04",
+    "cpu": 1,
+    "memory": 1024,
+    "created_at": "2026-01-29T19:53:27.074663",
+    "container_id": "e51133981b94465504d8ec1df9fb453f0eb9cb1a487980e0bde1e713b9a28b57"
+  }
+]

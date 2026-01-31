@@ -1,0 +1,65 @@
+CloudSim - Installation Guide
+========================================
+
+SUPER SIMPLE INSTALLATION - 3 STEPS:
+
+Step 1: Install Python (5 minutes)
+   - Go to: python.org/downloads
+   - Download Python 3.8 or newer
+   - IMPORTANT: Check the box "Add Python to PATH"
+   - Click Install
+   - Done!
+
+Step 2: Run Setup (2 minutes)
+   - Double-click: SETUP_WITH_YOUR_PYTHON.bat
+   - Wait for it to install dependencies
+   - Done!
+
+Step 3: Launch CloudSim (anytime!)
+   - Double-click: CloudSim.bat
+   - Backend starts automatically
+   - Desktop app opens
+   - Enjoy!
+
+That's it! No complicated commands, no terminal needed!
+
+========================================
+
+WHAT HAPPENS WHEN YOU LAUNCH:
+- Backend server starts in background (localhost:8000)
+- Desktop app opens with beautiful purple-blue gradient UI
+- Everything runs on your computer
+- No internet connection needed
+- When you close the app, backend stops automatically
+
+FEATURES:
+✓ EC2 Instance Management
+✓ S3 Bucket Operations  
+✓ IAM Users & Policies
+✓ Lambda Functions
+✓ RDS Databases
+✓ Modern Vibrant UI
+
+TROUBLESHOOTING:
+
+Problem: "Python is not recognized"
+Solution: Reinstall Python and check "Add Python to PATH"
+
+Problem: Setup fails
+Solution: Open Command Prompt as Administrator and run:
+         SETUP_WITH_YOUR_PYTHON.bat
+
+Problem: Backend won't start
+Solution: Close any apps using port 8000
+         Restart your computer and try again
+
+Problem: Desktop app shows connection error  
+Solution: Wait 10 seconds after launching
+         Backend needs time to start
+
+NEED HELP?
+Check the console window for error messages
+All errors are displayed there
+
+CloudSim v1.0 - Cloud Infrastructure Simulator
+Made for easy learning and experimentation!

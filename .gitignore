@@ -46,10 +46,13 @@ build/
 *.exe
 *.zip
 
-# Documentation - Exclude all .md except README.md
+# Documentation - Keep essential docs only
 *.md
 !README.md
 !CHANGELOG.md
+!BUILD_RELEASE_GUIDE.md
+!RELEASE_NOTES_v1.0.md
+!RELEASE_CHECKLIST_v1.0.md
 
 # Temporary files
 *.tmp

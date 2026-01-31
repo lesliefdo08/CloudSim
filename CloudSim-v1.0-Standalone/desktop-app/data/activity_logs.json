@@ -1,0 +1,39 @@
+[
+  {
+    "eventId": "event-9c2298e3f49b0869",
+    "timestamp": "2026-01-28T17:56:46.249065",
+    "user": "local-user",
+    "service": "EC2",
+    "action": "CreateInstance",
+    "resourceType": "ec2_instance",
+    "resourceId": "i-723394b1",
+    "resourceName": "leslie",
+    "region": "us-east-1",
+    "status": "success",
+    "details": {
+      "instanceType": "t2.micro",
+      "cpu": 1,
+      "memory": 1024,
+      "image": "ubuntu:22.04",
+      "pricePerHour": "$0.0000"
+    },
+    "costImpact": 0.0
+  },
+  {
+    "eventId": "event-46ecd77cd00ae036",
+    "timestamp": "2026-01-28T17:57:03.258497",
+    "user": "local-user",
+    "service": "EC2",
+    "action": "StartInstance",
+    "resourceType": "ec2_instance",
+    "resourceId": "i-723394b1",
+    "resourceName": "leslie",
+    "region": "us-east-1",
+    "status": "success",
+    "details": {
+      "previousState": "stopped",
+      "newState": "running"
+    },
+    "costImpact": 0.0
+  }
+]
